@@ -1,5 +1,7 @@
 #include "../test.h"
 
+#ifndef __APPLE__
+
 /**
  * NB: if ULib is configured and compiled (./configure --disable-shared && make) use this way:
  *
@@ -168,3 +170,5 @@ public:
 };
 
 REGISTER_TEST(ULibTest);
+
+#endif

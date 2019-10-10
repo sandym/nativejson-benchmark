@@ -1,5 +1,6 @@
 /bin/*
 /build/gmake
+/build/premake5
 /build/vs*/
 /intermediate
 /thirdparty/include/yajl

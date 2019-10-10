@@ -135,7 +135,9 @@ solution "benchmark"
             "../thirdparty/facil.io/lib/facil/core/types/fiobj",
         }
 
-      linkoptions { "../../thirdparty/ULib/src/ulib/.libs/libulib.a" }
+        if (os.isdir("../../thirdparty/ULib/src/ulib/.libs/")) then
+			linkoptions { "../../thirdparty/ULib/src/ulib/.libs/libulib.a" }
+		end
 
 		files {
 			"../src/*.h",
@@ -236,8 +238,10 @@ solution "jsonstat"
 			links "jsonclibs2"
             setTargetObjDir("../bin/jsonstat")
 
-      linkoptions { "../../thirdparty/ULib/src/ulib/.libs/libulib.a" }
-
+			if (os.isdir("../../thirdparty/ULib/src/ulib/.libs/")) then
+		    	linkoptions { "../../thirdparty/ULib/src/ulib/.libs/libulib.a" }
+			end
+			
 			configuration "gmake"
 				buildoptions "-std=c++14"
     end

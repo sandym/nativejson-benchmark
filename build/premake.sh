@@ -1,5 +1,10 @@
 #!/bin/bash
-premake5 gmake
+if [ -f premake5 ]
+then
+	./premake5 gmake
+else
+	premake5 gmake
+fi
 
 # This is probably necessary only on OSX because premake generates
 #  invalid compiler flags. See:
