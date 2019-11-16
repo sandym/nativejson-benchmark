@@ -117,6 +117,7 @@ solution "benchmark"
 
         includedirs {
             "../thirdparty/",
+            "../thirdparty/jsoncons/include/",
             "../thirdparty/fastjson/include/",
             "../thirdparty/jsonbox/include/",
             "../thirdparty/jsoncpp/include/",
@@ -153,7 +154,7 @@ solution "benchmark"
 		links "jsonclibs"
 
 		configuration "gmake"
-			buildoptions "-std=c++14"
+			buildoptions "-std=c++17"
 
 solution "jsonstat"
     configurations { "release" }
@@ -177,6 +178,7 @@ solution "jsonstat"
 
     includedirs {
         "../thirdparty/",
+		"../thirdparty/jsoncons/include/",
         "../thirdparty/fastjson/include/",
         "../thirdparty/jsonbox/include/",
         "../thirdparty/jsoncpp/include/",
@@ -243,5 +245,5 @@ solution "jsonstat"
 			end
 			
 			configuration "gmake"
-				buildoptions "-std=c++14"
+				buildoptions "-std=c++17"
     end
