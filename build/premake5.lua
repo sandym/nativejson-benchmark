@@ -78,7 +78,7 @@ solution "benchmark"
 
 	location ("./" .. (_ACTION or ""))
 	language "C++"
-	flags { "ExtraWarnings" }
+	warnings "Extra"
 	defines { "__STDC_FORMAT_MACROS=1" }
 
 	configuration "release"
@@ -161,7 +161,7 @@ solution "jsonstat"
     platforms { "x32", "x64" }
     location ("./" .. (_ACTION or ""))
     language "C++"
-    flags { "ExtraWarnings" }
+    warnings "Extra"
 
     defines {
     	"USE_MEMORYSTAT=0",
