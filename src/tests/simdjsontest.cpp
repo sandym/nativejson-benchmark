@@ -57,7 +57,8 @@ class SimdJsonParseResult : public ParseResultBase {
 class SimdStringResult : public StringResultBase {
  public:
   std::stringstream ss;
-  const char *c_str() const override { return ss.str().c_str(); }
+  mutable std::string s;
+  const char *c_str() const override { s = ss.str(); return s.c_str(); }
 };
 class SimdTest : public TestBase {
  public:
@@ -124,6 +125,7 @@ class SimdTest : public TestBase {
   bool ParseString(const char *j, std::string &s) const override {
     simdjson::error_code error;
     std::string_view answer;
+    simdjson::dom::parser parser;
     parser.parse(j,strlen(j))
         .at(0)
         .get<std::string_view>()
