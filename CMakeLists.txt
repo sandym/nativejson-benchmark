@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(nativejson)
 
-set(KAPPADIR /kappa CACHE PATH)
+set(KAPPADIR /kappa CACHE PATH "path to kappa")
 
 add_library(jsonclibs STATIC)
 target_sources(jsonclibs PRIVATE
@@ -107,7 +107,6 @@ target_sources(nativejson PRIVATE
 	src/tests/simplejsontest.cpp
 	src/tests/udpjsontest.cpp
 	src/tests/follytest.cpp
-	src/tests/kappajson.cpp
 	src/tests/qajson4ctest.cpp
 	src/tests/cajuntest.cpp
 	src/tests/cpprestsdktest.cpp
@@ -161,8 +160,6 @@ target_include_directories(nativejson PRIVATE
 	thirdparty/jvar/include
 	${CMAKE_BINARY_DIR}/thirdparty/include
 	${CMAKE_BINARY_DIR}/boost/src/boost
-	${KAPPADIR}/lib
-	${KAPPADIR}/lib/kappa/utils
 )
 target_link_libraries(nativejson PRIVATE jsonclibs)
 add_dependencies(nativejson boost)
@@ -171,6 +168,9 @@ file(GLOB testfiles src/tests/*.cpp)
 foreach(testfile ${testfiles})
 	get_filename_component(base ${testfile} NAME_WE)
 	if(${base} STREQUAL "ULibtest")
+		continue()
+	endif()
+	if(${base} STREQUAL "kappajson" AND NOT IS_DIRECTORY ${KAPPADIR})
 		continue()
 	endif()
 	add_executable("jsonstat_${base}")
@@ -212,18 +212,33 @@ foreach(testfile ${testfiles})
 		thirdparty/jvar/include
 		${CMAKE_BINARY_DIR}/thirdparty/include
 		${CMAKE_BINARY_DIR}/boost/src/boost
-		${KAPPADIR}/lib
-		${KAPPADIR}/lib/kappa/utils
 	)
 endforeach()
 add_dependencies(jsonstat_boostjsontest boost)
 
 set_source_files_properties(
 	src/tests/boostjsontest.cpp
-	src/tests/kappajson.cpp
 	PROPERTIES
 	COMPILE_OPTIONS "-std=c++17"
 )
+
+if(IS_DIRECTORY ${KAPPADIR})
+	message("using kappa from ${KAPPADIR}")
+	target_sources(nativejson PRIVATE src/tests/kappajson.cpp)
+	target_include_directories(nativejson PRIVATE
+		${KAPPADIR}/lib
+		${KAPPADIR}/lib/kappa/utils
+	)
+	target_include_directories("jsonstat_kappajson" PRIVATE
+		${KAPPADIR}/lib
+		${KAPPADIR}/lib/kappa/utils
+	)
+	set_source_files_properties(
+		src/tests/kappajson.cpp
+		PROPERTIES
+		COMPILE_OPTIONS "-std=c++17"
+	)
+endif()
 
 include(ExternalProject)
 ExternalProject_Add(
@@ -235,3 +250,26 @@ ExternalProject_Add(
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ""
 )
+
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+add_custom_target(run
+	COMMAND ${CMAKE_BINARY_DIR}/nativejson
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
+	DEPENDS nativejson
+	USES_TERMINAL
+)
+
+add_custom_target(benchmark
+	COMMAND make -f makefile
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/result
+	DEPENDS run
+	USES_TERMINAL
+)
+
+add_custom_target(show
+	COMMAND open conformance.html
+	COMMAND open performance_unknown_mac64_clang12.0.html
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/result
+	USES_TERMINAL
+)
+
